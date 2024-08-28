@@ -30,20 +30,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let data = FormData.allCases[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCell", for: indexPath) as! CustomCell
-        cell.isUserInteractionEnabled = data.type != -1
-        cell.headingLbl.text = data.title
-        cell.tfInput.isHidden = data.type != 0
-        cell.tfInput.tag = data.id
-        cell.tfInput.placeholder = data.title
-        cell.cellBtn.isHidden = data.type == 0 || data.type == 3
-        cell.cellBtn.setTitle(!(data.type == 0 || data.type == 3) ? data.title : "", for: .normal)
-        cell.cellBtn.tag = data.id
-        cell.cellBtn.addTarget(self, action: #selector(onClickCellAction(_:)), for: .touchUpInside)
-        cell.tvForDescription.isHidden = data.type == 3 ? false : true
-        cell.tvForDescription.tag = data.id
+        cell.delegate = self
         cell.tvForDescription.delegate = self
-        cell.tvForDescription.placeholder = data.title
-        cell.imgValueType.image = data.image
+        cell.loadData(data: data)
         return cell
     }
     
@@ -70,8 +59,11 @@ extension ViewController : UITextViewDelegate{
         }
     }
     
-    @objc func onClickCellAction(_ sender: UIButton){
-        switch sender.tag{
+}
+
+extension ViewController: CustomCellProtocol{
+    func didTapCellButton(tag: Int) {
+        switch tag{
         case 1:
              print("Current Date with")
         case 3:
@@ -83,6 +75,7 @@ extension ViewController : UITextViewDelegate{
         default:
             break
         }
+
     }
 }
 
@@ -110,8 +103,28 @@ enum FormData : CaseIterable{
             return ""
         }
     }
-    var doubleLine : Int
-    {
+    var userEnteredValue : String{
+        switch self{
+            
+        case .currentDate:
+            return "Current Date"
+        case .fromDateTime:
+            return "From Date & Time"
+        case .toDateTime:
+            return "To Date & Time"
+        case .totalHours:
+            return "Total Self Learning Hours"
+        case .trainingName:
+            return "Training Name"
+        case .trainingDesc:
+            return "Key Learnings"
+        case .fromDropdown:
+            return ""
+        case .toDropdown:
+            return ""
+        }
+    }
+    var doubleLine : Int{
         switch self{
             
         case .currentDate:
@@ -132,8 +145,7 @@ enum FormData : CaseIterable{
             return 0
         }
     }
-    var isMandatory : Bool
-    {
+    var isMandatory : Bool{
         switch self{
             
         case .currentDate:
@@ -156,7 +168,7 @@ enum FormData : CaseIterable{
     }
     
     var type : Int{
-        // 0 - textfield, 1 - Date Picker, 2- Time Picker, 3- remarks textField, -1 par not editable
+        // 0 - textfield, 1 - Date Picker, 2- Time Picker, 3- remarks textField, -1  not editable
         switch self{
             
         case .currentDate:
