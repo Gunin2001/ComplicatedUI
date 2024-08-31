@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var formCV: UICollectionView!
+    @IBOutlet weak var formCVHeightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,7 +19,21 @@ class ViewController: UIViewController {
         formCV.delegate = self
         formCV.dataSource = self
     }
-
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            if let value = change?[.newKey] {
+                let size  = value as? CGSize ?? CGSize.zero
+                if let collectionView = object as? UICollectionView {
+                    if collectionView == self.formCV {
+                        DispatchQueue.main.async {
+                            self.formCVHeightConstraint.constant = size.height
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
@@ -65,7 +80,7 @@ extension ViewController: CustomCellProtocol{
     func didTapCellButton(tag: Int) {
         switch tag{
         case 1:
-             print("Current Date with")
+            print("Current Date with")
         case 3:
             print("from time picker")
         case 5:
@@ -75,7 +90,7 @@ extension ViewController: CustomCellProtocol{
         default:
             break
         }
-
+        
     }
 }
 

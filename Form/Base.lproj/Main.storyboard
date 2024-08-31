@@ -71,6 +71,7 @@
                     <navigationItem key="navigationItem" title="Form Tutorial" id="S0c-24-Swb"/>
                     <connections>
                         <outlet property="formCV" destination="OE5-uW-weT" id="Ow1-Zg-CEx"/>
+                        <outlet property="formCVHeightConstraint" destination="sZR-yT-Zvo" id="ddf-hW-oTN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
